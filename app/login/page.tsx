@@ -24,10 +24,62 @@ export default function AuthPage() {
   });
   const router = useRouter();
 
-  // Handle Signup
+  // Handle login
+  const handleLogin = async () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!email || !password) {
+      setSnackbar({
+        open: true,
+        message: 'Email and password are required',
+        severity: 'error',
+      });
+      return;
+    }
+
+    if (!emailRegex.test(email)) {
+      setSnackbar({
+        open: true,
+        message: 'Invalid email format',
+        severity: 'error',
+      });
+      return;
+    }
+
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (res.ok) {
+      const { token } = await res.json();
+
+      // Store token in a cookie (or localStorage)
+      document.cookie = `auth=${token}; path=/; HttpOnly; Secure`;
+
+      setSnackbar({
+        open: true,
+        message: 'Login successful!',
+        severity: 'success',
+      });
+
+      // Redirect to the dashboard after successful login
+      router.push('/dashboard');
+    } else {
+      const { message } = await res.json();
+      setSnackbar({
+        open: true,
+        message: message || 'Invalid credentials. Please try again.',
+        severity: 'error',
+      });
+    }
+  };
+
+  // Handle signup
   const handleSignup = async () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const passwordRegex = /^.{3,}$/;
+    const passwordRegex = /^.{3,}$/; // Password must be at least 3 characters long
 
     if (!emailRegex.test(email)) {
       setSnackbar({
@@ -70,56 +122,6 @@ export default function AuthPage() {
     }
   };
 
-  // Handle Login
-  const handleLogin = async () => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!email || !password) {
-      setSnackbar({
-        open: true,
-        message: 'Email and password are required',
-        severity: 'error',
-      });
-      return;
-    }
-
-    if (!emailRegex.test(email)) {
-      setSnackbar({
-        open: true,
-        message: 'Invalid email format',
-        severity: 'error',
-      });
-      return;
-    }
-
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (res.ok) {
-      const { token } = await res.json();
-
-      // Store token in a cookie (or localStorage)
-      document.cookie = `auth=${token}; path=/; HttpOnly; Secure`;
-
-      setSnackbar({
-        open: true,
-        message: 'Login successful!',
-        severity: 'success',
-      });
-      router.push('/'); // Redirect to home page after successful login
-    } else {
-      const { message } = await res.json();
-      setSnackbar({
-        open: true,
-        message: message || 'Invalid credentials. Please try again.',
-        severity: 'error',
-      });
-    }
-  };
-
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
   };
@@ -143,7 +145,7 @@ export default function AuthPage() {
           maxWidth: 400,
           width: '90%',
           p: 3,
-          backgroundColor: 'rgba(255, 255, 255, 0.95)', // Slightly transparent background for the form
+          backgroundColor: 'rgba(255, 255, 255, 0.8)',
           borderRadius: 2,
           boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.3)',
         }}
