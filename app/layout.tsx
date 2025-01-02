@@ -3,6 +3,7 @@
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import React from 'react';
 import theme from './theme';
+import './globals.css';
 
 export default function RootLayout({
   children,

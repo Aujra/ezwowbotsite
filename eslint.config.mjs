@@ -13,6 +13,13 @@ export default [
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
     languageOptions: {
+      globals: {
+        fetch: 'readonly',
+        document: 'readonly',
+        alert: 'readonly',
+        console: 'readonly',
+        process: 'readonly',
+      },
       parser: tsParser,
       parserOptions: {
         ecmaVersion: 2022,
