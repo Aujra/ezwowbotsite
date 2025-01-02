@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { NextResponse } from 'next/server';
 
 export const runtime = 'nodejs'; // Use Node.js runtime to access `process`
 
@@ -24,7 +25,19 @@ export async function POST(req: Request) {
     expiresIn: '1d',
   });
 
-  return new Response(JSON.stringify({ message: 'Login successful', token }), {
-    status: 200,
+  const response = NextResponse.json({ message: 'Login successful' });
+
+  const expires = new Date();
+  expires.setMinutes(expires.getMinutes() + 60); // Set cookie expiration to 60 minutes (adjust as needed)
+  // Set the JWT token in the cookies
+  response.cookies.set('auth', token, {
+    httpOnly: true, // Ensure the cookie is HttpOnly
+    secure: true, // Secure flag only in production
+    sameSite: 'none', // Allow cookies to be sent across domains (needed for cross-origin requests)
+    path: '/', // Set cookie for the entire domain
+    expires: expires, // Set the expiration time
   });
+
+  // Return the response
+  return response;
 }

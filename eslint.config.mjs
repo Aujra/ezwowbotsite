@@ -19,6 +19,7 @@ export default [
         alert: 'readonly',
         console: 'readonly',
         process: 'readonly',
+        window: 'readonly',
       },
       parser: tsParser,
       parserOptions: {

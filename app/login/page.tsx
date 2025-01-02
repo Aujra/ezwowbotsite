@@ -53,11 +53,6 @@ export default function AuthPage() {
     });
 
     if (res.ok) {
-      const { token } = await res.json();
-
-      // Store token in a cookie (or localStorage)
-      document.cookie = `auth=${token}; path=/; HttpOnly; Secure`;
-
       setSnackbar({
         open: true,
         message: 'Login successful!',
