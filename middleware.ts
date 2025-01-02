@@ -1,38 +1,41 @@
-import jwt from 'jsonwebtoken';
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { jwtVerify } from 'jose'; // Import from the jose library
+import { NextRequest, NextResponse } from 'next/server';
 
-const SECRET_KEY = process.env.JWT_SECRET || 'ezwowbot';
+const SECRET_KEY = process.env.JWT_SECRET || 'your_secret_key';
 
-export function middleware(req: NextRequest) {
-  const url = req.nextUrl.pathname;
-
-  console.log('Inside middleware');
-
-  // Skip middleware for API routes
-  if (url.startsWith('/api')) {
-    return NextResponse.next();
+export async function middleware(req: NextRequest) {
+  // Bypass for login and API calls
+  if (
+    req.nextUrl.pathname.startsWith('/login') ||
+    req.nextUrl.pathname.startsWith('/api/')
+  ) {
+    return NextResponse.next(); // Allow login and API routes without token verification
   }
 
-  if (url === '/login') {
-    return NextResponse.next();
-  }
-
-  // Handle authentication for protected pages
+  // Access the token from cookies (get the actual string value)
   const token = req.cookies.get('auth')?.value;
-  console.log('Token:', token);
+
   if (!token) {
+    // If no token is found, redirect to login page
     return NextResponse.redirect(new URL('/login', req.url));
   }
 
   try {
-    jwt.verify(token, SECRET_KEY);
+    // Verify the token using the `jose` library
+    await jwtVerify(token, new TextEncoder().encode(SECRET_KEY));
+    // If the token is valid, continue to the requested route
     return NextResponse.next();
   } catch {
-    return NextResponse.redirect(new URL('/login', req.url));
+    // If the token is invalid or expired, log the error and redirect to login
+
+    // Clear the auth cookie if the token is invalid
+    const response = NextResponse.redirect(new URL('/login', req.url));
+    response.cookies.delete('auth'); // Delete the invalid token cookie
+    return response;
   }
 }
 
+// Matcher for all routes
 export const config = {
-  matcher: ['/', '/protected/:path*'], // Apply to these routes
+  matcher: ['/((?!_next).*)'], // Match everything except internal Next.js routes
 };

@@ -58,14 +58,12 @@ export default function AuthPage() {
         message: 'Login successful!',
         severity: 'success',
       });
-
       // Redirect to the dashboard after successful login
       router.push('/dashboard');
     } else {
-      const { message } = await res.json();
       setSnackbar({
         open: true,
-        message: message || 'Invalid credentials. Please try again.',
+        message: 'Invalid credentials. Please try again.',
         severity: 'error',
       });
     }
@@ -128,7 +126,6 @@ export default function AuthPage() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundImage: 'url("/background.webp")',
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
         backgroundAttachment: 'fixed',

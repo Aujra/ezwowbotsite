@@ -31,7 +31,7 @@ export default function Dashboard() {
   }, [searchParams]);
 
   return (
-    <Box sx={{ display: 'flex', height: '100vh' }}>
+    <Box sx={{ display: 'flex', height: 'auto' }}>
       <Drawer
         sx={{
           width: 240,
