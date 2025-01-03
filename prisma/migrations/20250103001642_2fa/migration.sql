@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `User` ADD COLUMN `is2FAVerified` BOOLEAN NOT NULL DEFAULT false;

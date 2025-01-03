@@ -4,17 +4,22 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
+  engineType = "edge" // Add this line to enable edge compatibility
 }
 
 model User {
-  id            Int             @id @default(autoincrement())
-  email         String          @unique
-  password      String
-  name          String?
-  role          String          @default("user")
-  License       License[]
-  CombatProfile CombatProfile[]
+  id              Int             @id @default(autoincrement())
+  email           String          @unique
+  password        String
+  role            String          @default("user")
+  twoFactorSecret String? // Store TOTP secret
+  is2FAEnabled    Boolean         @default(false) // Flag to check if 2FA is enabled
+  is2FAVerified   Boolean         @default(false) // Flag to check if 2FA is verified
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @default(now()) @updatedAt
+  License         License[]
+  CombatProfile   CombatProfile[]
 }
 
 model License {
@@ -26,18 +31,18 @@ model License {
 }
 
 model CombatProfile {
-  id               Int      @id @default(autoincrement())
-  type             String @default("queue")
-  name             String
-  data             Json
-  ui               Json
-  talents          String?
-  userId           Int
-  ownerId          Int
-  originalProfileId Int?    // Nullable initially
-  sharable         Boolean
-  sellable         Boolean
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  user             User     @relation(fields: [userId], references: [id])
+  id                Int      @id @default(autoincrement())
+  type              String   @default("queue")
+  name              String
+  data              Json
+  ui                Json
+  talents           String?
+  userId            Int
+  ownerId           Int
+  originalProfileId Int? // Nullable initially
+  sharable          Boolean
+  sellable          Boolean
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id])
 }

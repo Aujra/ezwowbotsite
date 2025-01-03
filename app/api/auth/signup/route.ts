@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
-  const { email, password, name } = await req.json();
+  const { email, password } = await req.json();
 
   if (!email || !password) {
     return new Response('Email and password are required', { status: 400 });
@@ -17,7 +17,6 @@ export async function POST(req: Request) {
       data: {
         email,
         password: hashedPassword,
-        name,
       },
     });
 
