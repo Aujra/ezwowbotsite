@@ -1,88 +1,84 @@
-// /app/admin/dashboard/page.tsx (Admin Dashboard)
+// /app/admin/dashboard/page.tsx
 
 'use client';
 
-import { Box, Typography, Grid, Paper, Button } from '@mui/material';
-import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import {
+  Box,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
+} from '@mui/material';
+import { useRouter } from 'next/navigation'; // Import useRouter for navigation
+import { useState } from 'react';
+import UserDetails from '../users/UserDetails'; // Import User Details view
+import UserList from '../users/UserList'; // Import User List view
 
 const AdminDashboard = () => {
-  const [usersCount, setUsersCount] = useState(0);
-  const [ordersCount, setOrdersCount] = useState(0);
-  const [productsCount, setProductsCount] = useState(0);
-  const router = useRouter();
+  const [selectedView, setSelectedView] = useState('users'); // Default view
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null); // User ID for User Details view
+  const router = useRouter(); // Use Next.js router for navigation
 
-  useEffect(() => {
-    // Fetch statistics for the dashboard
-    fetchStatistics();
-  }, []);
+  const handleViewChange = (view: string) => {
+    setSelectedView(view);
+    setSelectedUserId(null); // Reset user ID when switching views
+  };
 
-  const fetchStatistics = async () => {
-    try {
-      const [usersRes, ordersRes, productsRes] = await Promise.all([
-        fetch('/api/admin/users/count'),
-        fetch('/api/admin/orders/count'),
-        fetch('/api/admin/products/count'),
-      ]);
+  const handleUserSelect = (userId: number) => {
+    setSelectedUserId(userId); // Set selected user for viewing details
+    setSelectedView('userDetails'); // Switch to the user details view
+  };
 
-      const usersData = await usersRes.json();
-      const ordersData = await ordersRes.json();
-      const productsData = await productsRes.json();
-
-      setUsersCount(usersData.count);
-      setOrdersCount(ordersData.count);
-      setProductsCount(productsData.count);
-    } catch (error) {
-      console.error('Error fetching admin statistics:', error);
-    }
+  const handleBackToUserDashboard = () => {
+    router.push('/dashboard'); // Navigate to the user dashboard
   };
 
   return (
-    <Box sx={{ padding: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        Admin Dashboard
-      </Typography>
+    <Box sx={{ display: 'flex' }}>
+      {/* Sidebar */}
+      <Drawer
+        sx={{
+          width: 240,
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
+            width: 240,
+            boxSizing: 'border-box',
+          },
+        }}
+        variant="permanent"
+        anchor="left"
+      >
+        <List>
+          <ListItem
+            component={'button'}
+            onClick={() => handleViewChange('users')}
+          >
+            <ListItemText primary="User Management" />
+          </ListItem>
 
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={4}>
-          <Paper sx={{ padding: 2, textAlign: 'center' }}>
-            <Typography variant="h6">Total Users</Typography>
-            <Typography variant="h4">{usersCount}</Typography>
-            <Button
-              variant="outlined"
-              onClick={() => router.push('/admin/users')}
-            >
-              Manage Users
-            </Button>
-          </Paper>
-        </Grid>
+          {/* Add more options here */}
 
-        <Grid item xs={12} sm={4}>
-          <Paper sx={{ padding: 2, textAlign: 'center' }}>
-            <Typography variant="h6">Total Orders</Typography>
-            <Typography variant="h4">{ordersCount}</Typography>
-            <Button
-              variant="outlined"
-              onClick={() => router.push('/admin/orders')}
-            >
-              Manage Orders
-            </Button>
-          </Paper>
-        </Grid>
+          {/* Back to User Dashboard */}
+          <Divider sx={{ my: 2 }} />
+          <ListItem component={'button'} onClick={handleBackToUserDashboard}>
+            <ListItemText primary="Back to User Dashboard" />
+          </ListItem>
+        </List>
+      </Drawer>
 
-        <Grid item xs={12} sm={4}>
-          <Paper sx={{ padding: 2, textAlign: 'center' }}>
-            <Typography variant="h6">Total Products</Typography>
-            <Typography variant="h4">{productsCount}</Typography>
-            <Button
-              variant="outlined"
-              onClick={() => router.push('/admin/products')}
-            >
-              Manage Products
-            </Button>
-          </Paper>
-        </Grid>
-      </Grid>
+      {/* Main Content */}
+      <Box
+        component="main"
+        sx={{ flexGrow: 1, bgcolor: 'background.default', padding: 2 }}
+      >
+        {selectedView === 'users' && (
+          <UserList onUserSelect={handleUserSelect} />
+        )}
+        {selectedView === 'userDetails' && selectedUserId && (
+          <UserDetails userId={selectedUserId} />
+        )}
+      </Box>
     </Box>
   );
 };

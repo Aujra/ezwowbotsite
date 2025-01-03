@@ -47,3 +47,8 @@ a {
     color-scheme: dark;
   }
 }
+
+/* Hides all placeholder text inside MUI TextField components */
+.MuiInputLabel-root {
+  visibility: hidden;
+}

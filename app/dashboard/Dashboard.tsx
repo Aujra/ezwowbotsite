@@ -8,7 +8,7 @@ import {
   ListItemText,
   Divider,
 } from '@mui/material';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import Cart from './Cart';
 import LicenseKeys from './LicenseKeys';
@@ -18,9 +18,14 @@ export default function Dashboard() {
   const [selectedTab, setSelectedTab] = useState(0);
   const [isDrawerOpen] = useState(true);
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const handleViewChange = (viewIndex: number) => {
     setSelectedTab(viewIndex);
+  };
+
+  const gotoAdminDashboard = () => {
+    router.push('/admin/dashboard');
   };
 
   useEffect(() => {
@@ -83,6 +88,9 @@ export default function Dashboard() {
             onClick={() => handleViewChange(2)}
           >
             <ListItemText primary="Cart" />
+          </ListItem>
+          <ListItem component={'button'} onClick={gotoAdminDashboard}>
+            Go to Admin Dashboard
           </ListItem>
         </List>
       </Drawer>
