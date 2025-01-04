@@ -1,100 +1,35 @@
 'use client';
 
-import {
-  Box,
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
-} from '@mui/material';
-import { useSearchParams, useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { Box } from '@mui/material';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import './styles.css';
 import Cart from './Cart';
 import LicenseKeys from './LicenseKeys';
 import Profile from './Profile';
+import Sidebar from '../components/Sidebar'; // Import Sidebar as a component
 
-export default function Dashboard() {
+const Dashboard = () => {
   const [selectedTab, setSelectedTab] = useState(0);
-  const [isDrawerOpen] = useState(true);
-  const searchParams = useSearchParams();
   const router = useRouter();
 
   const handleViewChange = (viewIndex: number) => {
     setSelectedTab(viewIndex);
   };
 
-  const gotoAdminDashboard = () => {
+  const handleGoToAdmin = () => {
     router.push('/admin/dashboard');
   };
 
-  useEffect(() => {
-    const section = searchParams.get('section');
-    if (section === 'license-keys') {
-      setSelectedTab(1);
-    }
-  }, [searchParams]);
-
   return (
-    <Box sx={{ display: 'flex', height: 'auto' }}>
-      <Drawer
-        sx={{
-          width: 240,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            width: 240,
-            boxSizing: 'border-box',
-            backgroundColor: '#3f51b5',
-            color: 'white',
-          },
-        }}
-        variant="persistent"
-        anchor="left"
-        open={isDrawerOpen}
-      >
-        <List>
-          <ListItem
-            component={'button'}
-            sx={{
-              backgroundColor: selectedTab === 0 ? '#2c387e' : 'transparent',
-              '&:hover': { backgroundColor: '#2c387e' },
-            }}
-            onClick={() => handleViewChange(0)}
-          >
-            <ListItemText primary="Profile" />
-          </ListItem>
+    <Box sx={{ display: 'flex' }}>
+      <Sidebar
+        selectedTab={selectedTab}
+        handleViewChange={handleViewChange}
+        handleGoToAdmin={handleGoToAdmin}
+      />
 
-          <Divider />
-
-          <ListItem
-            component={'button'}
-            sx={{
-              backgroundColor: selectedTab === 1 ? '#2c387e' : 'transparent',
-              '&:hover': { backgroundColor: '#2c387e' },
-            }}
-            onClick={() => handleViewChange(1)}
-          >
-            <ListItemText primary="License Keys" />
-          </ListItem>
-
-          <Divider />
-
-          <ListItem
-            component={'button'}
-            sx={{
-              backgroundColor: selectedTab === 2 ? '#2c387e' : 'transparent',
-              '&:hover': { backgroundColor: '#2c387e' },
-            }}
-            onClick={() => handleViewChange(2)}
-          >
-            <ListItemText primary="Cart" />
-          </ListItem>
-          <ListItem component={'button'} onClick={gotoAdminDashboard}>
-            Go to Admin Dashboard
-          </ListItem>
-        </List>
-      </Drawer>
-
+      {/* Main Content */}
       <Box
         component="main"
         sx={{
@@ -103,10 +38,25 @@ export default function Dashboard() {
           p: 3,
         }}
       >
-        {selectedTab === 0 && <Profile />}
-        {selectedTab === 1 && <LicenseKeys />}
-        {selectedTab === 2 && <Cart />}
+        {/* Render dynamic content based on selected tab */}
+        {selectedTab === 0 && (
+          <div>
+            <Profile />
+          </div>
+        )}
+        {selectedTab === 1 && (
+          <div>
+            <LicenseKeys />
+          </div>
+        )}
+        {selectedTab === 2 && (
+          <div>
+            <Cart />
+          </div>
+        )}
       </Box>
     </Box>
   );
-}
+};
+
+export default Dashboard;

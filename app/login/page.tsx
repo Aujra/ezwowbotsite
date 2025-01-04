@@ -121,15 +121,12 @@ export default function AuthPage() {
 
   return (
     <Box
+      className="dark-theme" // Apply Horde theme
       sx={{
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat',
-        backgroundAttachment: 'fixed',
-        backgroundPosition: 'center',
       }}
     >
       <Box
@@ -137,7 +134,6 @@ export default function AuthPage() {
           maxWidth: 400,
           width: '90%',
           p: 3,
-          backgroundColor: 'rgba(255, 255, 255, 0.8)',
           borderRadius: 2,
           boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.3)',
         }}

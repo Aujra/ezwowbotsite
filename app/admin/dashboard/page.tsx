@@ -12,12 +12,15 @@ import {
 } from '@mui/material';
 import { useRouter } from 'next/navigation'; // Import useRouter for navigation
 import { useState } from 'react';
+import CreateProduct from '../products/CreateProduct'; // Import Create Product view
+import ProductList from '../products/ProductList'; // Import Product List view
 import UserDetails from '../users/UserDetails'; // Import User Details view
 import UserList from '../users/UserList'; // Import User List view
 
 const AdminDashboard = () => {
   const [selectedView, setSelectedView] = useState('users'); // Default view
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null); // User ID for User Details view
+  const [selectedProductView, setSelectedProductView] = useState('list'); // To track if we're viewing list or creating/editing product
   const router = useRouter(); // Use Next.js router for navigation
 
   const handleViewChange = (view: string) => {
@@ -32,6 +35,10 @@ const AdminDashboard = () => {
 
   const handleBackToUserDashboard = () => {
     router.push('/dashboard'); // Navigate to the user dashboard
+  };
+
+  const handleCreateProductClick = () => {
+    setSelectedProductView('create'); // Switch to the product creation view
   };
 
   return (
@@ -50,11 +57,25 @@ const AdminDashboard = () => {
         anchor="left"
       >
         <List>
+          {/* User Management Link */}
           <ListItem
             component={'button'}
             onClick={() => handleViewChange('users')}
           >
             <ListItemText primary="User Management" />
+          </ListItem>
+
+          {/* Product Management Link */}
+          <ListItem
+            component={'button'}
+            onClick={() => handleViewChange('products')}
+          >
+            <ListItemText primary="Product Management" />
+          </ListItem>
+
+          {/* Add a Link to Create Product */}
+          <ListItem component={'button'} onClick={handleCreateProductClick}>
+            <ListItemText primary="Create Product" />
           </ListItem>
 
           {/* Add more options here */}
@@ -78,6 +99,11 @@ const AdminDashboard = () => {
         {selectedView === 'userDetails' && selectedUserId && (
           <UserDetails userId={selectedUserId} />
         )}
+        {selectedView === 'products' && (
+          <ProductList /> // Render Product List here
+        )}
+        {selectedProductView === 'create' && <CreateProduct />}{' '}
+        {/* Render Create Product Form */}
       </Box>
     </Box>
   );

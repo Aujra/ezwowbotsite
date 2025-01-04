@@ -1,0 +1,41 @@
+/* /app/dashboard/styles.css */
+
+/* Sidebar buttons */
+.MuiListItem-root {
+    background-color: transparent;
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    border: none;
+}
+
+/* Active item style */
+.MuiListItem-root.Mui-selected {
+    background-color: #2c387e; /* A deeper blue color when selected */
+    color: white;
+}
+
+/* Hover effect */
+.MuiListItem-root:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Slightly lighter shade on hover */
+    cursor: pointer;
+}
+
+/* Make sure text doesn't overflow */
+.MuiListItemText-root {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* Hamburger button */
+.MuiIconButton-root {
+    z-index: 9999;
+    position: absolute;
+    top: 16px;
+    left: 16px;
+}

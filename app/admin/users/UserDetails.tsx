@@ -58,15 +58,6 @@ const UserDetails = ({ userId }: { userId: number }) => {
     );
   };
 
-  const handleExpireKey = async (keyId: number) => {
-    const res = await fetch(`/api/admin/users/${userId}/keys/${keyId}`, {
-      method: 'DELETE',
-    });
-    if (res.ok) {
-      setKeys((prevKeys) => prevKeys.filter((key) => key.id !== keyId));
-    }
-  };
-
   const handleExpirationChange = (keyId: number, newExpiration: Date) => {
     setKeys((prevKeys) =>
       prevKeys.map((key) =>
@@ -118,30 +109,15 @@ const UserDetails = ({ userId }: { userId: number }) => {
                   {new Date(key.expiresAt).toLocaleString()}
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 1 }}>
-                  <Button
-                    variant="outlined"
-                    onClick={() => handleExpireKey(key.id)}
-                    color="error"
-                    sx={{ width: '100%' }}
-                  >
-                    Expire Key
-                  </Button>
-
                   {/* Update expiration */}
                   <TextField
+                    InputLabelProps={{ shrink: true }}
                     label="New Expiration Date"
                     type="datetime-local"
                     value={key.newExpiration?.toISOString().slice(0, 16) || ''}
                     onChange={(e) =>
                       handleExpirationChange(key.id, new Date(e.target.value))
                     }
-                    sx={{
-                      mt: 1,
-                      width: '100%',
-                      '& input': {
-                        paddingLeft: '12px', // Adjust left padding for better spacing
-                      },
-                    }}
                   />
 
                   <Button
